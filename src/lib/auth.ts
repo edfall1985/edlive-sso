@@ -51,6 +51,17 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      const edliveUrl = process.env.EDLIVE_URL || "https://live.digtri.com";
+
+      // Jika redirect ke EdLive (cross-domain), lewatkan sso-token dulu
+      if (url.startsWith(edliveUrl)) {
+        return `/api/auth/sso-token?redirect=${encodeURIComponent(url)}`;
+      }
+
+      // Default: redirect dalam domain yang sama
+      return url.startsWith(baseUrl) ? url : baseUrl;
+    },
     async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
