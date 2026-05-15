@@ -2,20 +2,27 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const checks: Record<string, string | boolean> = {};
+  const values: Record<string, string> = {};
 
-  // 1. Environment variables
+  const mask = (v: string | undefined) =>
+    v ? v.substring(0, 4) + "..." + v.slice(-4) : "MISSING";
+
   const requiredVars = [
-    "DB_HOST", "DB_USER", "DB_PASSWORD", "DB_NAME",
+    "DB_HOST", "DB_USER", "DB_NAME",
     "NEXTAUTH_URL", "NEXTAUTH_SECRET",
     "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET",
     "JWT_SECRET", "EDLIVE_URL",
+    "NEXT_PUBLIC_EDLIVE_URL",
+    "NEXT_PUBLIC_SSO_URL",
+    "OWNER_EMAILS",
   ];
 
   for (const v of requiredVars) {
-    checks[v] = process.env[v] ? true : `MISSING`;
+    const val = process.env[v];
+    checks[v] = val ? true : `MISSING`;
+    values[v] = val ? mask(val) : "(not set)";
   }
 
-  // 2. Database connectivity test
   try {
     const mysql = await import("mysql2/promise");
     const conn = await mysql.createConnection({
@@ -26,11 +33,10 @@ export async function GET() {
       database: process.env.DB_NAME || "u253037503_sso_db",
       connectTimeout: 5000,
     });
-    const [rows] = await conn.execute("SELECT 1 as test");
+    await conn.execute("SELECT 1 as test");
     checks.database = "OK";
     await conn.end();
 
-    // 3. Tables check
     const conn2 = await mysql.createConnection({
       host: process.env.DB_HOST || "localhost",
       port: Number(process.env.DB_PORT) || 3306,
@@ -57,7 +63,9 @@ export async function GET() {
       status: checks.status,
       timestamp: new Date().toISOString(),
       node: process.version,
+      platform: process.platform,
       checks,
+      values,
     },
     { status: allOk && checks.database === "OK" ? 200 : 503 },
   );
