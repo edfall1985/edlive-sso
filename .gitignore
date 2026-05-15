@@ -3,7 +3,6 @@ node_modules/
 .env
 .env.local
 .env*.local
-drizzle/
 scripts/
 *.tsbuildinfo
 next-env.d.ts
