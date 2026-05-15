@@ -49,13 +49,12 @@ function LoginForm() {
     const result = await signIn("credentials", {
       email,
       password,
-      redirect: false,
+      redirect: true,
+      callbackUrl,
     });
 
     if (result?.error) {
       setError("Email atau password salah");
-    } else if (result?.ok) {
-      router.push(callbackUrl);
     }
   };
 
