@@ -8,7 +8,7 @@ function LogoutHandler() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const callbackUrl = searchParams.get("callbackUrl") ||
-    "https://live.digtri.com/logout";
+    (typeof window !== "undefined" ? window.location.origin.replace("sso.", "live.") : "https://live.digtri.com") + "/logout";
 
   useEffect(() => {
     // Add logout flag so EdLive clears its cookie

@@ -20,7 +20,7 @@ function LoginForm() {
     OAuthAccountNotLinked:
       "Email ini sudah terdaftar dengan metode login lain. Silakan login dengan metode yang sesuai.",
     OAuthSignin: "Terjadi kesalahan saat memproses login Google. Coba lagi.",
-    OAuthCallback: "Login Google dibatalkan atau gagal. Pastikan redirect URI sudah diatur di Google Cloud Console:\nhttp://localhost:3000/api/auth/callback/google",
+    OAuthCallback: "Login Google dibatalkan atau gagal. Pastikan redirect URI sudah diatur di Google Cloud Console.",
     CredentialsSignin: "Email atau password salah.",
     default: "Terjadi kesalahan. Silakan coba lagi.",
   };
@@ -92,7 +92,7 @@ function LoginForm() {
               <p className="font-medium mb-1">⚠️ Perlu konfigurasi Google Cloud Console:</p>
               <p>Authorized redirect URIs:</p>
               <code className="block bg-white p-1 rounded text-blue-600 mt-1">
-                http://localhost:3000/api/auth/callback/google
+                {typeof window !== "undefined" ? `${window.location.origin}/api/auth/callback/google` : "https://sso.digtri.com/api/auth/callback/google"}
               </code>
             </div>
           )}

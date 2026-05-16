@@ -29,8 +29,9 @@ export async function GET(req: Request) {
       .then((rows) => rows[0]);
 
     if (!dbUser) {
+      const ssoUrl = process.env.NEXTAUTH_URL || "https://sso.digtri.com";
       return NextResponse.redirect(
-        `${process.env.NEXTAUTH_URL || "https://sso.digtri.com"}/login?error=UserNotFound`,
+        `${ssoUrl}/login?error=UserNotFound`,
       );
     }
 

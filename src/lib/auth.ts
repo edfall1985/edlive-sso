@@ -53,10 +53,11 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async redirect({ url, baseUrl }) {
       const edliveUrl = process.env.EDLIVE_URL || "https://live.digtri.com";
+      const ssoBaseUrl = process.env.NEXTAUTH_URL || "https://sso.digtri.com";
 
       // Jika redirect ke EdLive (cross-domain), lewatkan sso-token dulu
-      if (url.startsWith(edliveUrl)) {
-        return `/api/auth/sso-token?redirect=${encodeURIComponent(url)}`;
+      if (url.startsWith(edliveUrl) || url.includes("localhost:3001") || url.includes("live.digtri.com")) {
+        return `${ssoBaseUrl}/api/auth/sso-token?redirect=${encodeURIComponent(url)}`;
       }
 
       // Default: redirect dalam domain yang sama
